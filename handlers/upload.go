@@ -41,7 +41,7 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.GetCurrentUserID(r)
 	var count int
 	var maitreNom string
-	err = database.DB.QueryRow("SELECT COUNT(*), (SELECT nom FROM users WHERE id = ?) FROM classes WHERE id = ? AND user_id = ?", userID, classeID, userID).Scan(&count, &maitreNom)
+	err = database.DB.QueryRow("SELECT COUNT(*), maitre FROM classes WHERE id = ? AND user_id = ?", classeID, userID).Scan(&count, &maitreNom)
 	if err != nil || count == 0 {
 		http.Error(w, "Accès refusé", 403)
 		return
@@ -152,8 +152,8 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Debug: afficher les colonnes détectées
-	fmt.Printf("DEBUG - En-têtes normalisés: %v\n", normalizedHeaders)
-	fmt.Printf("DEBUG - Colonnes détectées: %v\n", headerMap)
+	// fmt.Printf("DEBUG - En-têtes normalisés: %v\n", normalizedHeaders)
+	// fmt.Printf("DEBUG - Colonnes détectées: %v\n", headerMap)
 
 	// Vérifier qu'on a trouvé les colonnes essentielles
 	essentialCols := []string{"nom", "r_lc", "c_lc", "dm", "r_math", "c_math", "edd", "arabe", "dessin", "total", "moyenne", "rang"}
@@ -182,9 +182,9 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Récupérer les infos de la classe pour les bulletins
-	var classe models.Classe
-	err = database.DB.QueryRow("SELECT nom, ecole, annee_scolaire FROM classes WHERE id = ?", classeID).
-		Scan(&classe.Nom, &classe.Ecole, &classe.AnneeScolaire)
+var classe models.Classe
+err = database.DB.QueryRow("SELECT nom, ecole, annee_scolaire, trimestre FROM classes WHERE id = ?", classeID).
+    Scan(&classe.Nom, &classe.Ecole, &classe.AnneeScolaire, &classe.Trimestre)
 	if err != nil {
 		http.Error(w, "Erreur récupération classe", 500)
 		return
@@ -325,6 +325,7 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 				Ecole:         classe.Ecole,
 				Classe:        classe.Nom,
 				AnneeScolaire: classe.AnneeScolaire,
+				Trimestre: classe.Trimestre,
 				Effectif:      0, // sera corrigé après
 				Maitre:        maitreNom,
 				Prenom:        prenom,
@@ -366,7 +367,7 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 	if maxRang > effectifFinal {
 		effectifFinal = maxRang
 	}
-	fmt.Printf("DEBUG - Effectif calculé: %d\n", effectifFinal)
+	// fmt.Printf("DEBUG - Effectif calculé: %d\n", effectifFinal)
 	for _, b := range bulletinsToGenerate {
 		b.data.Effectif = effectifFinal
 		// Calculer l'appréciation globale de la moyenne
@@ -408,18 +409,6 @@ func detectCSVSeparator(firstLine string) rune {
 	return ','
 }
 
-func validateHeaders(actual, expected []string) bool {
-	if len(actual) < len(expected) {
-		return false
-	}
-	for i, exp := range expected {
-		if i >= len(actual) || actual[i] != exp {
-			return false
-		}
-	}
-	return true
-}
-
 func getMention(moyenne float64) string {
 	if moyenne >= 5.0 {
 		return "Réussi"
@@ -441,9 +430,4 @@ func parseIntSafe(s string) int {
 		return 0
 	}
 	return val
-}
-
-func isNumeric(s string) bool {
-	_, err := strconv.ParseFloat(strings.TrimSpace(s), 64)
-	return err == nil
 }

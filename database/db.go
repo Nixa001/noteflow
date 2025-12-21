@@ -30,7 +30,8 @@ func InitDB() (*sql.DB, error) {
 		nom TEXT NOT NULL,
 		ecole TEXT NOT NULL,
 		annee_scolaire TEXT NOT NULL,
-		effectif INTEGER NOT NULL,
+		maitre TEXT NOT NULL,
+		trimestre TEXT NOT NULL,
 		user_id INTEGER NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY (user_id) REFERENCES users(id)

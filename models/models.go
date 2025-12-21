@@ -15,7 +15,8 @@ type Classe struct {
 	Nom           string
 	Ecole         string
 	AnneeScolaire string
-	Effectif      int
+	Maitre        string
+	Trimestre     string
 	UserID        int
 	CreatedAt     time.Time
 }
@@ -55,6 +56,7 @@ type BulletinData struct {
 	Ecole               string
 	Classe              string
 	AnneeScolaire       string
+	Trimestre           string
 	Effectif            int
 	Maitre              string
 	Prenom              string

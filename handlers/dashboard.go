@@ -17,7 +17,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Récupérer les classes de l'utilisateur
 	rows, err := database.DB.Query(`
-		SELECT id, nom, ecole, annee_scolaire, effectif, created_at 
+		SELECT id, nom, ecole, annee_scolaire, maitre, created_at 
 		FROM classes 
 		WHERE user_id = ? 
 		ORDER BY created_at DESC`, userID)
@@ -30,7 +30,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	var classes []models.Classe
 	for rows.Next() {
 		var c models.Classe
-		rows.Scan(&c.ID, &c.Nom, &c.Ecole, &c.AnneeScolaire, &c.Effectif, &c.CreatedAt)
+		rows.Scan(&c.ID, &c.Nom, &c.Ecole, &c.AnneeScolaire, &c.Maitre, &c.CreatedAt)
 		classes = append(classes, c)
 	}
 
@@ -56,12 +56,13 @@ func CreateClasseHandler(w http.ResponseWriter, r *http.Request) {
 	nom := r.FormValue("nom")
 	ecole := r.FormValue("ecole")
 	annee := r.FormValue("annee_scolaire")
-	effectif, _ := strconv.Atoi(r.FormValue("effectif"))
-
-	_, err := database.DB.Exec(`
-		INSERT INTO classes (nom, ecole, annee_scolaire, effectif, user_id) 
-		VALUES (?, ?, ?, ?, ?)`,
-		nom, ecole, annee, effectif, userID)
+	maitre := r.FormValue("maitre")
+    trimestre := r.FormValue("trimestre")
+	
+    _, err := database.DB.Exec(`
+        INSERT INTO classes (nom, ecole, annee_scolaire, maitre, trimestre, user_id) 
+        VALUES (?, ?, ?, ?, ?, ?)`,
+        nom, ecole, annee, maitre, trimestre, userID)
 
 	if err != nil {
 		http.Error(w, "Erreur création classe", 500)
@@ -85,10 +86,10 @@ func ClasseDetailHandler(w http.ResponseWriter, r *http.Request) {
 	// Vérifier que la classe appartient à l'utilisateur
 	var classe models.Classe
 	err = database.DB.QueryRow(`
-		SELECT id, nom, ecole, annee_scolaire, effectif 
+		SELECT id, nom, ecole, annee_scolaire, maitre 
 		FROM classes 
 		WHERE id = ? AND user_id = ?`, classeID, userID).
-		Scan(&classe.ID, &classe.Nom, &classe.Ecole, &classe.AnneeScolaire, &classe.Effectif)
+		Scan(&classe.ID, &classe.Nom, &classe.Ecole, &classe.AnneeScolaire, &classe.Maitre)
 
 	if err != nil {
 		http.Error(w, "Classe introuvable", 404)
