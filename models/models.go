@@ -52,16 +52,17 @@ type Bulletin struct {
 }
 
 type BulletinData struct {
-	Ecole         string
-	Classe        string
-	AnneeScolaire string
-	Effectif      int
-	Maitre        string
-	Prenom        string
-	Nom           string
-	Notes         Notes
-	Mention       string
-	Date          string
-	Appreciation  string
-	  Appreciations map[string]string //
+	Ecole               string
+	Classe              string
+	AnneeScolaire       string
+	Effectif            int
+	Maitre              string
+	Prenom              string
+	Nom                 string
+	Notes               Notes
+	Mention             string
+	Date                string
+	Appreciation        string
+	Appreciations       map[string]string
+	AppreciationGlobale string // Ajouté pour le template
 }

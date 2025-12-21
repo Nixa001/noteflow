@@ -144,3 +144,21 @@ func Appreciation(note float64, maxi int) string {
 
 	return ""
 }
+
+// Appreciation globale pour la moyenne générale (sur 10)
+func AppreciationGlobale(moyenne float64) string {
+	switch {
+	case moyenne >= 9:
+		return "Excellent"
+	case moyenne >= 8:
+		return "Très bien"
+	case moyenne >= 7:
+		return "Bien"
+	case moyenne >= 6:
+		return "Assez bien"
+	case moyenne >= 5:
+		return "Passable"
+	default:
+		return "Insuffisant"
+	}
+}

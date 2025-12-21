@@ -369,6 +369,8 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("DEBUG - Effectif calculé: %d\n", effectifFinal)
 	for _, b := range bulletinsToGenerate {
 		b.data.Effectif = effectifFinal
+		// Calculer l'appréciation globale de la moyenne
+		b.data.AppreciationGlobale = services.AppreciationGlobale(b.data.Notes.Moyenne)
 		pdfPath, err := services.GeneratePDF(b.data, b.eleveID)
 		if err != nil {
 			errorCount++
