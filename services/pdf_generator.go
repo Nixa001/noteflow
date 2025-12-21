@@ -84,3 +84,63 @@ func GeneratePDF(data models.BulletinData, eleveID int) (string, error) {
 
 	return pdfPath, nil
 }
+func Appreciation(note float64, maxi int) string {
+	if maxi == 40 {
+		switch {
+		case note >= 36:
+			return "Excellent travail"
+		case note >= 30:
+			return "Très bon travail"
+		case note >= 25:
+			return "Bon travail"
+		case note >= 20:
+			return "Résultats satisfaisants"
+		case note >= 15:
+			return "Résultats faibles"
+		case note >= 10:
+			return "Travail insuffisant"
+		default:
+			return "Résultats très faibles"
+		}
+	}
+
+	if maxi == 60 {
+		switch {
+		case note >= 54:
+			return "Excellent travail"
+		case note >= 45:
+			return "Très bon travail"
+		case note >= 38:
+			return "Bon travail"
+		case note >= 30:
+			return "Résultats satisfaisants"
+		case note >= 23:
+			return "Résultats faibles"
+		case note >= 15:
+			return "Travail insuffisant"
+		default:
+			return "Résultats très faibles"
+		}
+	}
+
+	if maxi == 10 {
+		switch {
+		case note >= 9:
+			return "Excellent travail"
+		case note >= 8:
+			return "Très bon travail"
+		case note >= 7:
+			return "Bon travail"
+		case note >= 6:
+			return "Résultats satisfaisants"
+		case note >= 5:
+			return "Résultats faibles"
+		case note >= 3:
+			return "Travail insuffisant"
+		default:
+			return "Résultats très faibles"
+		}
+	}
+
+	return ""
+}

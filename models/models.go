@@ -63,4 +63,5 @@ type BulletinData struct {
 	Mention       string
 	Date          string
 	Appreciation  string
+	  Appreciations map[string]string //
 }

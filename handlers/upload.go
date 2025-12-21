@@ -340,11 +340,20 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 					Dessin:  dessin,
 					Total:   total,
 					Moyenne: moyenne,
-					Rang:    rang, // rang individuel du CSV
+					Rang:    rang,
 				},
 				Mention:      appreciation,
 				Appreciation: appreciation,
 				Date:         time.Now().Format("02/01/2006"),
+				Appreciations: map[string]string{
+					"RLC":    services.Appreciation(rLC, 40),
+					"CLC":    services.Appreciation(cLC, 60),
+					"EDD":    services.Appreciation(edd, 40),
+					"RMath":  services.Appreciation(rMath, 40),
+					"CMath":  services.Appreciation(cMath, 40),
+					"Dessin": services.Appreciation(dessin, 10),
+					"Arabe":  services.Appreciation(arabe, 10),
+				},
 			},
 			eleveID: int(eleveID),
 		})
