@@ -44,47 +44,6 @@
                 <button type="submit" class="btn-primary">Importer et générer les bulletins</button>
             </form>
         </div>
-
-        <!-- Liste des élèves -->
-        {{if .Eleves}}
-        <div class="table-container">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Rang</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Moyenne</th>
-                        <th>Total</th>
-                        <th>Bulletin</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{range .Eleves}}
-                    <tr>
-                        <td>{{.Rang}}</td>
-                        <td>{{.Nom}}</td>
-                        <td>{{.Prenom}}</td>
-                        <td>{{.Moyenne}}/10</td>
-                        <td>{{.Total}}</td>
-                        <td>
-                            {{if .PDFPath}}
-                            <a href="/bulletins/download/{{.ID}}" class="btn-sm" target="_blank">📄 Télécharger</a>
-                            {{else}}
-                            <span class="text-muted">Indisponible</span>
-                            {{end}}
-                        </td>
-                    </tr>
-                    {{end}}
-                </tbody>
-            </table>
-        </div>
-        {{else}}
-        <div class="empty-state">
-            <p>Aucun élève dans cette classe.</p>
-            <p>Importez un fichier CSV pour commencer.</p>
-        </div>
-        {{end}}
     </div>
 </body>
 </html>
