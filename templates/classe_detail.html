@@ -1,0 +1,90 @@
+
+<!-- templates/classe_detail.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Classe.Nom}} - Bulletins Scolaires</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <h1>📚 Bulletins Scolaires</h1>
+            <a href="/dashboard" class="btn-secondary">← Retour</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="class-header">
+            <div>
+                <h2>{{.Classe.Nom}}</h2>
+                <p>{{.Classe.Ecole}} - {{.Classe.AnneeScolaire}}</p>
+            </div>
+            {{if not .Eleves}}
+            <button class="btn-primary" onclick="document.getElementById('upload-form').style.display='block'">
+                📤 Importer CSV
+            </button>
+            {{else}}
+            <a href="/bulletins/zip/{{.Classe.ID}}" class="btn-primary">📦 Télécharger tout (ZIP)</a>
+            {{end}}
+        </div>
+
+        <!-- Formulaire d'upload CSV -->
+        <div id="upload-form" style="display:none;" class="form-card">
+            <h3>Importer le fichier CSV</h3>
+            <form method="POST" action="/csv/upload" enctype="multipart/form-data">
+                <input type="hidden" name="classe_id" value="{{.Classe.ID}}">
+                <div class="form-group">
+                    <label>Fichier CSV</label>
+                    <input type="file" name="csv_file" accept=".csv" required>
+                    <small>Format attendu: Prenom,Nom,R_LC,C_LC,DM,R_Math,C_Math,EDD,Arabe,Dessin,Total,Moyenne,Rang</small>
+                </div>
+                <button type="submit" class="btn-primary">Importer et générer les bulletins</button>
+            </form>
+        </div>
+
+        <!-- Liste des élèves -->
+        {{if .Eleves}}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Moyenne</th>
+                        <th>Total</th>
+                        <th>Bulletin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Eleves}}
+                    <tr>
+                        <td>{{.Rang}}</td>
+                        <td>{{.Nom}}</td>
+                        <td>{{.Prenom}}</td>
+                        <td>{{.Moyenne}}/10</td>
+                        <td>{{.Total}}</td>
+                        <td>
+                            {{if .PDFPath}}
+                            <a href="/bulletins/download/{{.ID}}" class="btn-sm" target="_blank">📄 Télécharger</a>
+                            {{else}}
+                            <span class="text-muted">Indisponible</span>
+                            {{end}}
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+        {{else}}
+        <div class="empty-state">
+            <p>Aucun élève dans cette classe.</p>
+            <p>Importez un fichier CSV pour commencer.</p>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>

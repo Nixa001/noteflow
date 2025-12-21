@@ -1,0 +1,45 @@
+
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Bulletins Scolaires</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <h1>📚 Bulletins Scolaires</h1>
+            <a href="/logout" class="btn-secondary">Déconnexion</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h2>Mes Classes</h2>
+            <a href="/classes/new" class="btn-primary">+ Nouvelle Classe</a>
+        </div>
+
+        {{if .Classes}}
+        <div class="classes-grid">
+            {{range .Classes}}
+            <div class="class-card">
+                <h3>{{.Nom}}</h3>
+                <p><strong>École:</strong> {{.Ecole}}</p>
+                <p><strong>Année:</strong> {{.AnneeScolaire}}</p>
+                <p><strong>Effectif:</strong> {{.Effectif}} élèves</p>
+                <a href="/classes/{{.ID}}" class="btn-primary">Voir détails</a>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="empty-state">
+            <p>Aucune classe créée pour le moment.</p>
+            <a href="/classes/new" class="btn-primary">Créer ma première classe</a>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>
