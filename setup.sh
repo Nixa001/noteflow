@@ -64,7 +64,7 @@ run:
 
 # Compiler l'application
 build:
-	go build -o bulletin-app main.go
+	  
 
 # Nettoyer les fichiers générés
 clean:

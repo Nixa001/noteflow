@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"noteflow/database"
 	"noteflow/handlers"
-	"noteflow/middleware"
 	"os"
 )
 
@@ -23,22 +22,11 @@ func main() {
 
 	// Routes publiques
 	http.HandleFunc("/", handlers.HomeHandler)
-	http.HandleFunc("/register", handlers.RegisterHandler)
-	http.HandleFunc("/login", handlers.LoginHandler)
-	http.HandleFunc("/logout", handlers.LogoutHandler)
-
-	// Routes protégées (dashboard)
-	http.HandleFunc("/dashboard", middleware.AuthMiddleware(handlers.DashboardHandler))
-
-	// Routes classes
-	http.HandleFunc("/classes/new", middleware.AuthMiddleware(handlers.NewClasseHandler))
-	http.HandleFunc("/classes/create", middleware.AuthMiddleware(handlers.CreateClasseHandler))
-	http.HandleFunc("/classes/", middleware.AuthMiddleware(handlers.ClasseDetailHandler))
 
 	// Routes CSV et bulletins
-	http.HandleFunc("/csv/upload", middleware.AuthMiddleware(handlers.UploadCSVHandler))
-	http.HandleFunc("/bulletins/download/", middleware.AuthMiddleware(handlers.DownloadBulletinHandler))
-	http.HandleFunc("/bulletins/zip/", middleware.AuthMiddleware(handlers.DownloadZipHandler))
+	http.HandleFunc("/csv/upload", handlers.UploadCSVHandler)
+	http.HandleFunc("/bulletins/download/", handlers.DownloadBulletinHandler)
+	http.HandleFunc("/bulletins/zip/", handlers.DownloadZipHandler)
 
 	// Servir les fichiers statiques
 	fs := http.FileServer(http.Dir("./static"))

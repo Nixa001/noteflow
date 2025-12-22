@@ -32,9 +32,8 @@ func InitDB() (*sql.DB, error) {
 		annee_scolaire TEXT NOT NULL,
 		maitre TEXT NOT NULL,
 		trimestre TEXT NOT NULL,
-		user_id INTEGER NOT NULL,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		FOREIGN KEY (user_id) REFERENCES users(id)
+		user_id INTEGER DEFAULT 0,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 
 	CREATE TABLE IF NOT EXISTS eleves (

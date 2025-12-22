@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"net/http"
 	"noteflow/database"
-	"noteflow/middleware"
 	"os"
 	"strconv"
 	"strings"
@@ -23,20 +22,16 @@ func DownloadBulletinHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := middleware.GetCurrentUserID(r)
-
-	// Vérifier que le bulletin appartient à une classe de l'utilisateur
+	// Récupérer le bulletin
 	var pdfPath string
-	var classeID int
 	err = database.DB.QueryRow(`
-		SELECT b.pdf_path, b.classe_id 
-		FROM bulletins b
-		JOIN classes c ON b.classe_id = c.id
-		WHERE b.eleve_id = ? AND c.user_id = ?`, eleveID, userID).
-		Scan(&pdfPath, &classeID)
+		SELECT pdf_path 
+		FROM bulletins 
+		WHERE eleve_id = ?`, eleveID).
+		Scan(&pdfPath)
 
 	if err != nil {
-		http.Error(w, "Bulletin introuvable ou accès refusé", 404)
+		http.Error(w, "Bulletin introuvable", 404)
 		return
 	}
 
@@ -60,13 +55,11 @@ func DownloadZipHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := middleware.GetCurrentUserID(r)
-
-	// Vérifier que la classe appartient à l'utilisateur
+	// Vérifier que la classe existe
 	var count int
-	err = database.DB.QueryRow("SELECT COUNT(*) FROM classes WHERE id = ? AND user_id = ?", classeID, userID).Scan(&count)
+	err = database.DB.QueryRow("SELECT COUNT(*) FROM classes WHERE id = ?", classeID).Scan(&count)
 	if err != nil || count == 0 {
-		http.Error(w, "Accès refusé", 403)
+		http.Error(w, "Classe introuvable", 404)
 		return
 	}
 

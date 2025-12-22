@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulletins Scolaires</title>
+    <style>
         /* RESET */
         * {
             margin: 0;
@@ -7,19 +14,14 @@
 
         /* VARIABLES */
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --accent: #8b5cf6;
-            --success: #10b981;
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary: #503a82;
+            --secondary: #007558;
+            --white: #ffffff;
+            --bg-gradient: linear-gradient(135deg, #332165 0%, #503a82 100%);
             --text-dark: #1e293b;
             --text-muted: #64748b;
             --border: #e2e8f0;
             --radius: 20px;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,.08);
-            --shadow-md: 0 8px 24px rgba(0,0,0,.12);
-            --shadow-lg: 0 20px 40px rgba(0,0,0,.15);
         }
 
         /* BODY */
@@ -27,19 +29,22 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
             background: var(--bg-gradient);
-            padding: 20px;
+            padding: 16px;
             color: var(--text-dark);
         }
 
         /* NAVBAR */
         .navbar {
-            background: rgba(255,255,255,0.98);
+            background: var(--white);
             backdrop-filter: blur(20px);
             border-radius: var(--radius);
             padding: 20px 24px;
-            margin-bottom: 32px;
-            box-shadow: var(--shadow-md);
+            /* margin-bottom: 20px; */
+            box-shadow: 0 8px 24px rgba(0,0,0,.12);
             border: 1px solid rgba(255,255,255,0.3);
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .nav-content {
@@ -49,6 +54,7 @@
             gap: 8px;
             max-width: 620px;
             margin: 0 auto;
+            margin-bottom: 24px;
         }
 
         .brand {
@@ -69,7 +75,7 @@
         }
 
         .navbar h1 {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -82,6 +88,7 @@
             font-size: 14px;
             color: var(--text-muted);
             font-weight: 500;
+            text-align: center;
         }
 
         /* CONTAINER */
@@ -92,10 +99,10 @@
 
         /* CARD */
         .form-card {
-            background: white;
+            background: var(--white);
             border-radius: var(--radius);
-            padding: 36px 32px;
-            box-shadow: var(--shadow-lg);
+            padding: 32px 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,.15);
             border: 1px solid rgba(255,255,255,0.5);
             position: relative;
             overflow: hidden;
@@ -108,27 +115,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-        }
-
-        /* HEADER */
-        .card-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .card-header h2 {
-            color: var(--text-dark);
-            font-size: 26px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .card-header p {
-            color: var(--text-muted);
-            font-size: 15px;
-            line-height: 1.5;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
         /* SECTIONS */
@@ -163,13 +150,13 @@
             font-size: 14px;
             font-weight: 600;
             color: var(--text-dark);
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             display: block;
         }
 
         input, select {
             width: 100%;
-            padding: 16px 18px;
+            padding: 8px 10px;
             border-radius: 12px;
             border: 2px solid var(--border);
             font-size: 15px;
@@ -184,13 +171,13 @@
         }
 
         input:hover, select:hover {
-            border-color: var(--primary-light);
+            border-color: var(--secondary);
         }
 
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(99,102,241,.1);
+            box-shadow: 0 0 0 4px rgba(80,58,130,.1);
             transform: translateY(-1px);
         }
 
@@ -241,7 +228,7 @@
             border-radius: 8px;
             border: none;
             background: var(--primary);
-            color: white;
+            color: var(--white);
             font-weight: 600;
             cursor: pointer;
             margin-right: 12px;
@@ -249,7 +236,7 @@
         }
 
         input[type="file"]::file-selector-button:hover {
-            background: var(--primary-dark);
+            background: var(--secondary);
             transform: translateY(-1px);
         }
 
@@ -260,7 +247,7 @@
             padding: 18px;
             border-radius: 14px;
             border: none;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: linear-gradient(135deg, var(--primary), rgba(99,102,241));
             color: white;
             font-size: 16px;
             font-weight: 700;
@@ -286,7 +273,7 @@
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 10px;
         }
 
         /* RESPONSIVE */
@@ -296,7 +283,7 @@
             }
 
             .form-card {
-                padding: 28px 24px;
+                padding: 24px 20px;
             }
         }
 
@@ -307,7 +294,7 @@
             }
 
             body {
-                padding: 32px;
+                padding: 24px;
             }
 
             .navbar {
@@ -330,3 +317,73 @@
         .form-card {
             animation: slideIn .5s ease-out;
         }
+    </style>
+</head>
+<body>
+    <!-- <nav class="navbar">
+    
+    </nav> -->
+
+    <main class="container">
+        <section class="form-card">
+            <div class="nav-content">
+                <div class="brand">
+                    <span class="logo">📘</span>
+                    <h1>Bulletins</h1>
+                </div>
+                <p class="tagline">Générez vos bulletins en 1 minute. Importez un fichier CSV et générez automatiquement les bulletins scolaires pour votre classe.</p>
+            </div>
+
+            <form method="POST" action="/csv/upload" enctype="multipart/form-data">
+                <h3 class="section-title">Informations de la classe</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Classe</label>
+                        <input type="text" name="nom" placeholder="CM1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Trimestre</label>
+                        <select name="trimestre" required>
+                            <option value="">Sélectionner</option>
+                            <option value="Premier">Premier</option>
+                            <option value="Second">Second</option>
+                            <option value="Troisième">Troisième</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>École</label>
+                    <input type="text" name="ecole" placeholder="École Ndiana Ndour" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Année scolaire</label>
+                        <input type="text" name="annee_scolaire" placeholder="2025 - 2026" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Enseignant(e)</label>
+                        <input type="text" name="maitre" placeholder="M. Faye" required>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Fichier des élèves</h3>
+                
+                <div class="form-group file-group">
+                    <input type="file" name="csv_file" accept=".csv" required>
+                    <small>Format CSV avec colonnes : Prenom, Nom, Notes...</small>
+                </div>
+
+                <button class="btn-primary" type="submit">
+                    <span>Générer les bulletins</span>
+                    <span>🚀</span>
+                </button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

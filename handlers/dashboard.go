@@ -6,21 +6,17 @@ import (
 	"html/template"
 	"net/http"
 	"noteflow/database"
-	"noteflow/middleware"
 	"noteflow/models"
 	"strconv"
 	"strings"
 )
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
-	userID := middleware.GetCurrentUserID(r)
-
-	// Récupérer les classes de l'utilisateur
+	// Récupérer les classes
 	rows, err := database.DB.Query(`
 		SELECT id, nom, ecole, annee_scolaire, maitre, created_at 
 		FROM classes 
-		WHERE user_id = ? 
-		ORDER BY created_at DESC`, userID)
+		ORDER BY created_at DESC`)
 	if err != nil {
 		http.Error(w, "Erreur chargement classes", 500)
 		return
@@ -52,17 +48,16 @@ func CreateClasseHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	r.ParseForm()
-	userID := middleware.GetCurrentUserID(r)
 	nom := r.FormValue("nom")
 	ecole := r.FormValue("ecole")
 	annee := r.FormValue("annee_scolaire")
 	maitre := r.FormValue("maitre")
-    trimestre := r.FormValue("trimestre")
-	
-    _, err := database.DB.Exec(`
+	trimestre := r.FormValue("trimestre")
+
+	_, err := database.DB.Exec(`
         INSERT INTO classes (nom, ecole, annee_scolaire, maitre, trimestre, user_id) 
         VALUES (?, ?, ?, ?, ?, ?)`,
-        nom, ecole, annee, maitre, trimestre, userID)
+		nom, ecole, annee, maitre, trimestre, 0)
 
 	if err != nil {
 		http.Error(w, "Erreur création classe", 500)
@@ -81,14 +76,12 @@ func ClasseDetailHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := middleware.GetCurrentUserID(r)
-
-	// Vérifier que la classe appartient à l'utilisateur
+	// Récupérer la classe
 	var classe models.Classe
 	err = database.DB.QueryRow(`
 		SELECT id, nom, ecole, annee_scolaire, maitre 
 		FROM classes 
-		WHERE id = ? AND user_id = ?`, classeID, userID).
+		WHERE id = ?`, classeID).
 		Scan(&classe.ID, &classe.Nom, &classe.Ecole, &classe.AnneeScolaire, &classe.Maitre)
 
 	if err != nil {

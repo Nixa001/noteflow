@@ -10,7 +10,6 @@ import (
 	"io"
 	"net/http"
 	"noteflow/database"
-	"noteflow/middleware"
 	"noteflow/models"
 	"noteflow/services"
 	"strconv"
@@ -30,22 +29,37 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Récupérer l'ID de la classe
-	classeID, err := strconv.Atoi(r.FormValue("classe_id"))
-	if err != nil {
-		http.Error(w, "ID classe invalide", 400)
+	// Récupérer les informations de la classe depuis le formulaire
+	nom := r.FormValue("nom")
+	ecole := r.FormValue("ecole")
+	annee := r.FormValue("annee_scolaire")
+	maitre := r.FormValue("maitre")
+	trimestre := r.FormValue("trimestre")
+
+	if nom == "" || ecole == "" || annee == "" || maitre == "" || trimestre == "" {
+		http.Error(w, "Tous les champs de la classe sont requis", 400)
 		return
 	}
 
-	// Vérifier la propriété de la classe et récupérer le nom du maître
-	userID := middleware.GetCurrentUserID(r)
-	var count int
-	var maitreNom string
-	err = database.DB.QueryRow("SELECT COUNT(*), maitre FROM classes WHERE id = ? AND user_id = ?", classeID, userID).Scan(&count, &maitreNom)
-	if err != nil || count == 0 {
-		http.Error(w, "Accès refusé", 403)
+	// Créer la classe automatiquement
+	result, err := database.DB.Exec(`
+		INSERT INTO classes (nom, ecole, annee_scolaire, maitre, trimestre, user_id) 
+		VALUES (?, ?, ?, ?, ?, ?)`,
+		nom, ecole, annee, maitre, trimestre, 0) // user_id = 0 car pas d'auth
+
+	if err != nil {
+		http.Error(w, "Erreur création classe: "+err.Error(), 500)
 		return
 	}
+
+	classeIDInt64, err := result.LastInsertId()
+	if err != nil {
+		http.Error(w, "Erreur récupération ID classe", 500)
+		return
+	}
+	classeID := int(classeIDInt64)
+
+	maitreNom := maitre
 
 	// Parser le fichier CSV
 	file, _, err := r.FormFile("csv_file")
@@ -182,15 +196,14 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Récupérer les infos de la classe pour les bulletins
-var classe models.Classe
-err = database.DB.QueryRow("SELECT nom, ecole, annee_scolaire, trimestre FROM classes WHERE id = ?", classeID).
-    Scan(&classe.Nom, &classe.Ecole, &classe.AnneeScolaire, &classe.Trimestre)
+	var classe models.Classe
+	err = database.DB.QueryRow("SELECT nom, ecole, annee_scolaire, trimestre FROM classes WHERE id = ?", classeID).
+		Scan(&classe.Nom, &classe.Ecole, &classe.AnneeScolaire, &classe.Trimestre)
 	if err != nil {
 		http.Error(w, "Erreur récupération classe", 500)
 		return
 	}
 
-	successCount := 0
 	errorCount := 0
 	effectif := 0
 	maxRang := 0
@@ -325,7 +338,7 @@ err = database.DB.QueryRow("SELECT nom, ecole, annee_scolaire, trimestre FROM cl
 				Ecole:         classe.Ecole,
 				Classe:        classe.Nom,
 				AnneeScolaire: classe.AnneeScolaire,
-				Trimestre: classe.Trimestre,
+				Trimestre:     classe.Trimestre,
 				Effectif:      0, // sera corrigé après
 				Maitre:        maitreNom,
 				Prenom:        prenom,
@@ -385,18 +398,8 @@ err = database.DB.QueryRow("SELECT nom, ecole, annee_scolaire, trimestre FROM cl
 			continue
 		}
 	}
-	// Rediriger vers la page de la classe avec un message de succès
-	redirectURL := fmt.Sprintf("/classes/%d?effectif=%d", classeID, effectifFinal)
-	queryParams := []string{}
-	if successCount > 0 {
-		queryParams = append(queryParams, fmt.Sprintf("success=%d", successCount))
-	}
-	if errorCount > 0 {
-		queryParams = append(queryParams, fmt.Sprintf("errors=%d", errorCount))
-	}
-	if len(queryParams) > 0 {
-		redirectURL += "&" + strings.Join(queryParams, "&")
-	}
+	// Rediriger vers la page de téléchargement des bulletins
+	redirectURL := fmt.Sprintf("/bulletins/zip/%d", classeID)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
