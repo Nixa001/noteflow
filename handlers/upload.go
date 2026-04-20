@@ -362,6 +362,7 @@ func UploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 				Appreciations: map[string]string{
 					"RLC":    services.Appreciation(rLC, 40),
 					"CLC":    services.Appreciation(cLC, 60),
+					"DM":     services.Appreciation(dm, 60),
 					"EDD":    services.Appreciation(edd, 40),
 					"RMath":  services.Appreciation(rMath, 40),
 					"CMath":  services.Appreciation(cMath, 40),
